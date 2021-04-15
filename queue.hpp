@@ -9,7 +9,9 @@ namespace priority_queue {
  */
 template <typename T>
 struct Element {
-  // Implementasikan di sini.
+  T data;
+  int priority;
+  Element* next;
 };
 
 template <typename T>
@@ -20,7 +22,8 @@ using ElementPtr = Element<T> *;
  */
 template <typename T>
 struct Queue {
-  // Implementasikan di sini.
+  ElementPtr<T> Head;
+  ElementPtr<T> Tail;
 };
 
 /**
@@ -30,7 +33,10 @@ struct Queue {
  */
 template <typename T>
 Queue<T> new_queue() {
-  // Implementasikan di sini.
+  Queue<T> q;
+  q.Head = nullptr;
+  q.Tail = nullptr;
+  return q;
 }
 
 /**
@@ -42,7 +48,45 @@ Queue<T> new_queue() {
  */
 template <typename T>
 void enqueue(Queue<T> &q, const T &value, int priority) {
-  // Implementasikan di sini.
+  ElementPtr<T> pBaru, pRev, pBantu;
+  
+  //ISI DATA
+  pBaru = new Element<T>;
+  pBaru->data = value;                    
+  pBaru->priority = priority;
+  pBaru->next = nullptr;
+
+  pRev = nullptr;
+  pBantu = q.Head;
+  
+  //MEMASUKKAN DATA
+  if(q.Head == nullptr && q.Tail == nullptr){           // pada saat list kosong
+    q.Head = pBaru;
+    q.Tail = pBaru; 
+  }else{                                                // pada saat list tidak kosong
+    while(pBaru->priority <= pBantu->priority){         // cek priority
+      if(pBantu->next == nullptr)
+        break;
+      pRev = pBantu;
+      pBantu = pBantu->next;
+    }
+
+    //INSERT FIRST
+    if(pBaru->priority > pBantu->priority && pBantu == q.Head){
+      pBaru->next = pBantu;
+      q.Head = pBaru;
+    }
+    //INSERT LAST 
+    else if(pBaru->priority < pBantu->priority && pBantu == q.Tail){
+        pBantu->next = pBaru;
+        q.Tail = pBaru;
+    }
+    //INSERT MID
+    else{
+      pRev->next = pBaru;
+      pBaru->next = pBantu;
+    }
+  }
 }
 
 /**
@@ -53,7 +97,7 @@ void enqueue(Queue<T> &q, const T &value, int priority) {
  */
 template <typename T>
 T top(const Queue<T> &q) {
-  // Implementasikan di sini.
+  return q.Head->data;
 }
 
 /**
@@ -63,7 +107,18 @@ T top(const Queue<T> &q) {
  */
 template <typename T>
 void dequeue(Queue<T> &q) {
-  // Implementasikan di sini.
+  ElementPtr<T> pHapus;
+  if(q.Head == nullptr && q.Tail == nullptr){     // pada saat list kosong
+    pHapus = nullptr;
+  }else if(q.Head->next == nullptr){              // pada saat list berisi 1 Node
+    pHapus = q.Head;
+    q.Head = nullptr;
+    q.Tail = nullptr;
+  }else{                                          // delete first             
+    pHapus = q.Head;
+    q.Head = q.Head->next;
+    pHapus->next = nullptr;
+  }
 }
 
 }  // namespace priority_queue
